@@ -65,18 +65,58 @@ def vector_dotproduct(dpv1,dpv2):
     print("Dot Product: " + str(dot_product))
     return dot_product
 
+
 def vector_innerproduct(ipv1, ipv2):
 
     dot_product = vector_dotproduct(ipv1, ipv2)
     magnitude_ipv1 = vector_magnitude(ipv1)
     magnitude_ipv2 = vector_magnitude(ipv2)
-    multiply_arccos_by_this = dot_product/(magnitude_ipv1 * magnitude_ipv2)
-    inner_product = math.acos(multiply_arccos_by_this)
+
+    if magnitude_ipv1 != 0 and magnitude_ipv2 != 0:
+        multiply_arccos_by_this = dot_product/(magnitude_ipv1 * magnitude_ipv2)
+        inner_product = math.acos(multiply_arccos_by_this)
+    elif magnitude_ipv1 == 0 or magnitude_ipv2 == 0:
+        inner_product = 0
+    else:
+        print("Error in vector_innerproduct function.")
 
     radian_to_degree_conversion = float(57.2958 * inner_product)
 
     print("Inner Product in Radians: " + str(inner_product))
     print("Inner Product in Degrees: " + str(radian_to_degree_conversion))
+
+    return radian_to_degree_conversion
+
+
+def vector_orthogonal(ov1, ov2):
+
+    # toleranceInDotProduct = 1*10**-10  # 1e-10
+    orthDotProduct = vector_dotproduct(ov1, ov2)
+    orthInnerProduct = vector_innerproduct(ov1, ov2)
+
+    # >= 90 <= 91 handles floats that are almost exactly 90 degree angles
+    if orthDotProduct == 0 or (orthInnerProduct >= 90 and orthInnerProduct <= 91):
+        print(str(ov1) + " and " + str(ov2) + " are Orthogonal!")
+    elif orthDotProduct != 0 or orthInnerProduct != 90:
+        print(str(ov1) + " and " + str(ov2) + " are NOT Orthogonal!")
+    else:
+        print("Unknown Error in vector_orthogonal function.")
+
+
+def vector_parallel(pv1, pv2):
+
+    n = 0
+    for i in pv2:
+
+        if (float(i)/float(pv1[n])).is_integer() == True: # A bit easier than Modulo with Floats
+            n += 1
+        elif (float(i)/float(pv1[n])).is_integer() != True:
+            print(str(pv1) + " and " + str(pv2) + " are NOT Parallel.")
+            return 0
+        else:
+            print("Error in vector_parallel function.")
+
+    print(str(pv1) + " and " + str(pv2) + " are Parallel!")
 
 
 def main():
@@ -106,6 +146,16 @@ def main():
         vector2 = sys.argv[3].split(",")
         vector_innerproduct(vector1, vector2)
 
+    elif vector_action == "orthogonal":
+        vector1 = sys.argv[2].split(",")
+        vector2 = sys.argv[3].split(",")
+        vector_orthogonal(vector1, vector2)
+
+    elif vector_action == "parallel":
+        vector1 = sys.argv[2].split(",")
+        vector2 = sys.argv[3].split(",")
+        vector_parallel(vector1, vector2)
+
     else:
         vector1 = sys.argv[2].split(",")
         vector2 = sys.argv[3].split(",")
@@ -119,4 +169,3 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
