@@ -3,6 +3,8 @@
 # Basic Functions for working with Vectors in Linear Algebra
 # John Martinez (@marhtini) - February 2018
 
+#TODO: Cross Products
+
 import sys
 import math
 
@@ -10,17 +12,25 @@ import math
 def vector_add(av1, av2):
 
     vector_result = []
-    vector_result.append((float(av1[0]) + float(av2[0])))
-    vector_result.append((float(av1[1]) + float(av2[1])))
+    count = 0
+    while count < len(av1):
+        vector_result.append(float(av1[count]) - float(av2[count]))
+        count += 1
+
     print("Vector Addition: " + str(vector_result))
+    return vector_result
 
 
 def vector_subtract(sv1, sv2):
 
     vector_result = []
-    vector_result.append((float(sv1[0]) - float(sv2[0])))
-    vector_result.append((float(sv1[1]) - float(sv2[1])))
-    print("Vector Subtract: " + str(vector_result))
+    count = 0
+    while count < len(sv1):
+        vector_result.append(float(sv1[count]) - float(sv2[count]))
+        count += 1
+
+    print("Vector Subtraction: " + str(vector_result))
+    return vector_result
 
 
 def vector_multiply(scalar, mvector):
@@ -29,7 +39,10 @@ def vector_multiply(scalar, mvector):
 
     vector_result = []
     for i in mvector:
-        vector_result.append(eval(scalar) * float(i))
+        try:
+            vector_result.append(eval(scalar) * float(i))
+        except:
+            vector_result.append(scalar * float(i))
     print("Scalar Multiplication: " + str(vector_result))
     return vector_result
 
@@ -50,7 +63,9 @@ def vector_normalize(nv1):
 
     mag = vector_magnitude(nv1)
     nmultiply = (1.0/mag)
-    vector_multiply(str(nmultiply), nv1)  # STR because of Eval statement in Multiply
+    normalized = vector_multiply(str(nmultiply), nv1)  # STR because of Eval statement in Multiply
+    print("Normalization of " + str(nv1) + ": " + str(normalized))
+    return normalized
 
 
 def vector_dotproduct(dpv1,dpv2):
@@ -112,11 +127,46 @@ def vector_parallel(pv1, pv2):
             n += 1
         elif (float(i)/float(pv1[n])).is_integer() != True:
             print(str(pv1) + " and " + str(pv2) + " are NOT Parallel.")
-            return 0
+            return False
         else:
             print("Error in vector_parallel function.")
 
     print(str(pv1) + " and " + str(pv2) + " are Parallel!")
+    return True
+
+
+def vector_projection(vVect, bVect):
+
+    # angleAssumption <= 90  # Degrees
+    parallelLength = vector_multiply(vector_dotproduct(vVect, vector_normalize(bVect)), vector_normalize(bVect))
+    print("Parallel Length: " + str(parallelLength))
+    return parallelLength
+
+
+def vector_perpendicular(cVect, xVect):
+
+    aVect = vector_projection(cVect, xVect)
+    print("aVECT is: " + str(aVect))
+    print("xVECT (origin vector) is: " + str(xVect))
+
+    bVect = vector_subtract(cVect, aVect)
+    print("bVECT (Parallel Result) is: " + str(bVect))
+    return bVect
+
+
+def vector_crossproducts(vVect, wVect):
+
+    # v x w means v Cross w
+
+    crossProduct = 0
+    if vector_innerproduct(vVect, wVect) == 0 \
+            or vector_innerproduct(vVect, wVect) == 180\
+            or vVect == "0,0"\
+            or wVect == "0.0"\
+            or vector_parallel(vVect, wVect) is True:
+
+        print("Cross Product is :" + str(crossProduct))
+        return crossProduct # 0
 
 
 def main():
@@ -155,6 +205,16 @@ def main():
         vector1 = sys.argv[2].split(",")
         vector2 = sys.argv[3].split(",")
         vector_parallel(vector1, vector2)
+
+    elif vector_action == "projection":
+        vector1 = sys.argv[2].split(",")
+        vector2 = sys.argv[3].split(",")
+        vector_projection(vector1, vector2)
+
+    elif vector_action == "perpendicular":
+        vector1 = sys.argv[2].split(",")
+        vector2 = sys.argv[3].split(",")
+        vector_perpendicular(vector1, vector2)
 
     else:
         vector1 = sys.argv[2].split(",")
