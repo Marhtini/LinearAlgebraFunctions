@@ -3,7 +3,7 @@
 # Basic Functions for working with Vectors in Linear Algebra
 # John Martinez (@marhtini) - February 2018
 
-#TODO: Cross Products
+# TODO: Needs some refactoring for efficiency/input and help
 
 import sys
 import math
@@ -156,17 +156,73 @@ def vector_perpendicular(cVect, xVect):
 
 def vector_crossproducts(vVect, wVect):
 
-    # v x w means v Cross w
+    # x means CROSS in crossproduct
 
-    crossProduct = 0
+    if len(vVect) != 3:
+        print("Error: First Vector is not three dimensional.")
+        return 0
+    elif len(wVect) != 3:
+        print("Error: Second Vector is not three dimensional.")
+        return 0
+
     if vector_innerproduct(vVect, wVect) == 0 \
             or vector_innerproduct(vVect, wVect) == 180\
             or vVect == "0,0"\
             or wVect == "0.0"\
             or vector_parallel(vVect, wVect) is True:
-
+        crossProduct = [0,0,0]
         print("Cross Product is :" + str(crossProduct))
         return crossProduct # 0
+
+    else:
+
+        crossProduct = []
+
+        x = 0
+        y = 1
+        z = 2
+
+        row1_1 = float(vVect[y]) * float(wVect[z])
+        row1_2 = float(wVect[y]) * float(vVect[z])
+        row2_1 = float(vVect[x]) * float(wVect[z])
+        row2_2 = float(wVect[x]) * float(vVect[z])
+        row3_1 = float(vVect[x]) * float(wVect[y])
+        row3_2 = float(wVect[x]) * float(vVect[y])
+
+        finalRow1 = row1_1 - row1_2
+        finalRow2 = (row2_1 - row2_2) * -1 # Must make negative!
+        finalRow3 = row3_1 - row3_2
+
+
+        crossProduct.append(finalRow1)
+        crossProduct.append(finalRow2)
+        crossProduct.append(finalRow3)
+
+        print("The Cross Product is: " + str(crossProduct))
+        vector_area_parallelogram(crossProduct)
+
+
+def vector_area_parallelogram(crossproductvector):
+
+    x = crossproductvector[0]
+    y = crossproductvector[1]
+    z = crossproductvector[2]
+
+    parallelogram_vw = math.sqrt(x**2 + y**2 + z**2)
+
+    print("Parallelogram Spanned by V & W: " + str(parallelogram_vw))
+
+    vector_area_triangle(parallelogram_vw) # Get Triangle Spanning V & W
+
+    return parallelogram_vw
+
+
+def vector_area_triangle(parallelogram):
+
+    triangle_vw = parallelogram / 2
+
+    print("Triangle Spanned by V & W: " + str(triangle_vw))
+    return triangle_vw
 
 
 def main():
@@ -215,6 +271,11 @@ def main():
         vector1 = sys.argv[2].split(",")
         vector2 = sys.argv[3].split(",")
         vector_perpendicular(vector1, vector2)
+
+    elif vector_action == "crossproduct":
+        vector1 = sys.argv[2].split(",")
+        vector2 = sys.argv[3].split(",")
+        vector_crossproducts(vector1, vector2)
 
     else:
         vector1 = sys.argv[2].split(",")
