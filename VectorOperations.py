@@ -225,6 +225,39 @@ def vector_area_triangle(parallelogram):
     return triangle_vw
 
 
+def line_intersection(firstLine, secondLine):
+
+    x = 0.0
+    y = 0.0
+    basepoint = []
+
+    A = float(firstLine[0])
+    B = float(firstLine[1])
+    k1 = float(firstLine[2])
+    C = float(secondLine[0])
+    D = float(secondLine[1])
+    k2 = float(secondLine[2])
+
+    if A != 0:
+        try:
+            x = ((D * k1) - (B * k2)) / ((A * D) - (B * C))
+            y = ((-C * k1) + (A * k2)) / ((A * D) - (B * C))
+
+            basepoint.append(x)
+            basepoint.append(y)
+
+            if vector_dotproduct(basepoint, firstLine) == vector_dotproduct(basepoint, secondLine):
+                print("Dot Product of Basepoint and Both Lines are Equal. This means they are the same line!")
+
+        except ZeroDivisionError:
+            print("No intersection! DIVISION BY ZERO!")
+
+    print("X = " + str(x))
+    print("Y = " + str(y))
+
+    return 0
+
+
 def main():
 
     vector_action = sys.argv[1]
@@ -277,6 +310,11 @@ def main():
         vector2 = sys.argv[3].split(",")
         vector_crossproducts(vector1, vector2)
 
+    elif vector_action == "lineintersection":
+        line1 = sys.argv[2].split(",")
+        line2 = sys.argv[3].split(",")
+        line_intersection(line1,line2)
+
     else:
         vector1 = sys.argv[2].split(",")
         vector2 = sys.argv[3].split(",")
@@ -291,3 +329,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
